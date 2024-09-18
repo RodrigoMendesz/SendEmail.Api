@@ -65,6 +65,13 @@ namespace SendEmail.Api.Data.Repository
             _appDbContext.Emails.Remove(email);
             _appDbContext.SaveChanges();
         }
+        public async Task<List<LogEmail>> GetEmailsSentInLastHour(int userId)
+        {
+            var oneHourAgo = DateTime.UtcNow.AddHours(-1);
+            return await _appDbContext.EmailLogs
+                .Where(e => e.UserId == userId && e.SentAt >= oneHourAgo)
+                .ToListAsync();
+        }
 
     }
 }

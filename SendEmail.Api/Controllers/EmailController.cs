@@ -13,16 +13,23 @@ namespace SendEmail.Api.Controllers
     {
         private readonly IEmailService _service;
         private readonly IMapper _mapper;
-        public EmailController(IEmailService service, IMapper mapper)
+        private readonly ISpamDetectionService _spamDetectionService;
+        public EmailController(IEmailService service, IMapper mapper, ISpamDetectionService spamDetectionService)
         {
             _service = service;
             _mapper = mapper;
+            _spamDetectionService = spamDetectionService;
         }
         [HttpPost("EnviarEmail")]
-        public async Task<ActionResult<EmailDto>> SendEmail(EmailSendModel email)
+        public async Task<ActionResult<EmailModel>> SendEmail(EmailSendModel email)
         {
             try
             {
+                var isSpam = await _spamDetectionService.IsSpamAsync(email.UserId);
+                if (isSpam)
+                {
+                    return BadRequest("Email not sent: detected as spam.");
+                }
                 _service.SendEmailAsync(email);
                 return Ok(email); 
             }

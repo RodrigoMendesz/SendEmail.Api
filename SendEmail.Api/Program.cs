@@ -29,6 +29,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+builder.Services.AddScoped<IUserPreferencesRepository, UserPreferencesRepository>();
+builder.Services.AddScoped<IUserPreferencesService, UserPreferencesService>();
+
 
 
 
@@ -39,6 +42,7 @@ var mapperConfig = new AutoMapper.MapperConfiguration(c => {
     c.AllowNullDestinationValues = true;
     c.CreateMap<EmailModel, EmailDto>().ReverseMap();
     c.CreateMap<UserModel, SendEmail.Api.Data.DTOs.UserDto>().ReverseMap();
+    c.CreateMap<UserPreferencesModel, UserPreferencesDto>().ReverseMap();
 
 });
 

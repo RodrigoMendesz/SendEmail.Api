@@ -13,5 +13,7 @@ namespace SendEmail.Api.Data.Repository.Interfaces
         Task<EmailModel> GetEmailByIdAsync(int Id);
         Task SendEmailAsync(EmailSendModel email);
         Task DeleteEmailAsync(int id);
+        Task<List<LogEmail>> GetEmailsSentInLastHour(int userId);
     }
 }
+
