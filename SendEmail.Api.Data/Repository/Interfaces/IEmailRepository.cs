@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SendEmail.Api.Business.Services.Interfaces
+namespace SendEmail.Api.Data.Repository.Interfaces
 {
-    public interface IEmailService
+    public interface IEmailRepository
     {
         Task<IEnumerable<EmailModel>> GetEmailsByUserIdAsync(int Id);
         Task<EmailModel> GetEmailByIdAsync(int Id);

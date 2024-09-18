@@ -7,34 +7,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SendEmail.Api.Data.Repository.Interfaces;
 
 namespace SendEmail.Api.Business.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly string _sendGridApiKey = "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";
-        public async Task SendEmailAsync(EmailSendModel email)
+       private readonly IEmailRepository _repository;
+        public EmailService(IEmailRepository emailRepository)
         {
-            try
-            {
-                var client = new SendGridClient(_sendGridApiKey);
-                var from = new EmailAddress("your-email@example.com", "Example Sender");
-                var to = new EmailAddress(email.ToEmail);
-                var msg = MailHelper.CreateSingleEmail(from, to, email.Subject, email.Body, email.Body);
-                var response = await client.SendEmailAsync(msg);
-
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                {
-                    // Handle error
-                    throw new Exception($"Failed to send email: {response.StatusCode}");
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-            
+            _repository = emailRepository;
         }
+
+        public Task<EmailModel> GetEmailByIdAsync(int Id) => _repository.GetEmailByIdAsync(Id);
+
+        public Task<IEnumerable<EmailModel>> GetEmailsByUserIdAsync(int Id) => _repository.GetEmailsByUserIdAsync(Id);
+
+        public Task SendEmailAsync(EmailSendModel email) => _repository.SendEmailAsync(email);
+        
+        public Task DeleteEmailAsync(int id) => _repository.DeleteEmailAsync(id);
     }
 }
