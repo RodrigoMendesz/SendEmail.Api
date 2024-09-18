@@ -18,7 +18,6 @@ namespace SendEmail.Api.Business.Services
         {
             _repository = emailRepository;
         }
-
         public Task<EmailModel> GetEmailByIdAsync(int Id) => _repository.GetEmailByIdAsync(Id);
 
         public Task<IEnumerable<EmailModel>> GetEmailsByUserIdAsync(int Id) => _repository.GetEmailsByUserIdAsync(Id);

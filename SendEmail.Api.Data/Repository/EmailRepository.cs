@@ -15,7 +15,7 @@ namespace SendEmail.Api.Data.Repository
     public class EmailRepository : IEmailRepository
     {
         private readonly AppDbContext _appDbContext;
-        private readonly string _sendGridApiKey = "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";
+        private readonly string _sendGridApiKey = "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";
         public EmailRepository(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
@@ -24,29 +24,33 @@ namespace SendEmail.Api.Data.Repository
         {
             return _appDbContext.Emails.Where(e => e.Id == Id).FirstOrDefault();
         }
-        
+
         public async Task SendEmailAsync(EmailSendModel email)
         {
             try
             {
-                var client = new SendGridClient(_sendGridApiKey);
-                var from = new EmailAddress("your-email@example.com", "Example Sender");
+                var apiKey = "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";
+                var client = new SendGridClient(apiKey);
+
+                var from = new EmailAddress("mendes.dg151103@gmail.com", "Example User");
+
                 var to = new EmailAddress(email.ToEmail);
-                var msg = MailHelper.CreateSingleEmail(from, to, email.Subject, email.Body, email.Body);
+                var subject = email.Subject;
+                var plainTextContent = email.Body;
+                var htmlContent = $"<strong>{email.Body}</strong>"; 
+                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
                 var response = await client.SendEmailAsync(msg);
 
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                if (response.StatusCode != System.Net.HttpStatusCode.OK && response.StatusCode != System.Net.HttpStatusCode.Accepted)
                 {
-                    // Handle error
-                    throw new Exception($"Failed to send email: {response.StatusCode}");
+                    var errorMessage = await response.Body.ReadAsStringAsync();
+                    throw new Exception($"Failed to send email: {response.StatusCode} - {errorMessage}");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                throw new Exception($"An error occurred while sending the email: {ex.Message}", ex);
             }
-
         }
         public async Task<IEnumerable<EmailModel>> GetEmailsByUserIdAsync(int userId)
         {
